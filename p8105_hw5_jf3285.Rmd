@@ -31,7 +31,31 @@ iris_new = map(iris_with_missing, replace_missing_values)
 as_tibble(iris_new)
 ```
 
+## Problem 2
+```{r}
+files = list.files("data") 
 
+tidy_data = tibble(filename = files) %>% 
+  mutate(
+    subject_info = map(filename, ~read_csv(file.path("./data", .)))
+    ) %>% 
+  unnest(cols = subject_info) %>% 
+  janitor::clean_names() %>% 
+  pivot_longer(
+    week_1:week_8,
+    names_to = "week", 
+    values_to = "observation"
+  ) %>% 
+  mutate_all(~gsub("week_", "", .)) %>% 
+  separate(filename, into = "id_group", sep = ".csv") %>% 
+  separate(id_group, into = c("arm", "subject_id"), sep = "_") %>% 
+  mutate(arm = recode(arm, "con" = "control", "exp" = "experimental")) %>% 
+  mutate(observation = as.numeric(observation))
+
+tidy_data
+
+ 
+```
 
 
 
