@@ -97,8 +97,31 @@ reject_proportion
 
 ggplot(reject_proportion, aes(x = beta1, y = proportion)) + 
   geom_point() +
-  geom_line()
+  geom_line() +
+  labs(y = "proportion of times the null was rejected",
+       title = "The power of the test vs the effect size.")
 
+average_estimate = 
+  sim_results %>% 
+  group_by(beta1) %>% 
+  summarize(avg = mean(beta1_hat))
+
+average_reject_null = 
+  sim_results %>% 
+  group_by(beta1) %>% 
+  summarize(avg = mean(beta1_hat[p_value < 0.05]))
+
+ggplot() +
+  geom_point(average_estimate, mapping = aes(x = beta1, y = avg))+
+  geom_line(average_estimate, mapping = aes(x = beta1, y = avg, color = "sample average")) +
+  geom_point(average_reject_null, mapping = aes(x = beta1, y = avg)) +
+  geom_line(average_reject_null, mapping = aes(x = beta1, y = avg, color = "samples for which the null was rejected")) +
+  labs(y = "average estimate of beta1_hat",
+       title = "The average estimate of beta1_hat vs the true value of beta1.")
+
+
+  
+  
 
   
 ```
