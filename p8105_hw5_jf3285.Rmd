@@ -54,7 +54,9 @@ tidy_data = tibble(filename = files) %>%
 
 tidy_data
 
- 
+ggplot(tidy_data, aes(x = week, y = observation, color = arm, 
+                      group = interaction(arm, subject_id))) +
+  geom_line()
 ```
 
 
