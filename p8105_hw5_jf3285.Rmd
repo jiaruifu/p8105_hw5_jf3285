@@ -87,6 +87,18 @@ sim_results =
   unnest(estimate_dfs)
 sim_results
 
+reject_proportion = 
+  sim_results %>% 
+  group_by(beta1) %>% 
+  summarize(reject = length(which(p_value < 0.05)),
+            total = n()) %>% 
+  mutate(proportion = reject/total)
+reject_proportion
+
+ggplot(reject_proportion, aes(x = beta1, y = proportion)) + 
+  geom_point() +
+  geom_line()
+
 
   
 ```
