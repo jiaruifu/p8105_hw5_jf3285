@@ -2,29 +2,36 @@
 title: "Homework 5"
 author: "Jiarui Fu"
 date: "11/7/2019"
-output: html_document
+output: github_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(broom)
+
 ```
 
-## R Markdown
+## Problem 1
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+```{r}
+set.seed(10)
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+iris_with_missing = iris %>% 
+  map_df(~replace(.x, sample(1:150, 20), NA)) %>%
+  mutate(Species = as.character(Species))
 
-```{r cars}
-summary(cars)
+replace_missing_values = function(x) {
+  if (is.numeric(x)) {
+    x=replace_na(x, mean(x, na.rm = TRUE))}
+  else if (is.character(x)) {
+    x=replace_na(x, "virginca")}
+}
+
+iris_new = map(iris_with_missing, replace_missing_values) 
+as_tibble(iris_new)
 ```
 
-## Including Plots
 
-You can also embed plots, for example:
 
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
