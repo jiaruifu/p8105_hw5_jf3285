@@ -8,7 +8,6 @@ output: github_document
 ```{r setup, include=FALSE}
 library(tidyverse)
 library(broom)
-
 ```
 
 ## Problem 1
@@ -65,7 +64,7 @@ sim_regression = function(n = 30, beta0 = 2, sigma_sq = 50, beta1) {
   
   sim_data = tibble(
     x = rnorm(n, mean = 0, sd = 1),
-    y = beta0 + beta1 * x + rnorm(n, 0, sigma_sq)
+    y = beta0 + beta1 * x + rnorm(n, 0, sqrt(sigma_sq))
   )
   
   ls_fit = lm(y ~ x, data = sim_data)
@@ -85,7 +84,6 @@ sim_results =
     estimate_dfs = map(output_lists, bind_rows)) %>% 
   select(-output_lists) %>% 
   unnest(estimate_dfs)
-sim_results
 
 reject_proportion = 
   sim_results %>% 
@@ -96,7 +94,7 @@ reject_proportion =
 
 ggplot(reject_proportion, aes(x = beta1, y = proportion)) + 
   geom_point() +
-  geom_line() +
+  geom_smooth(se = FALSE) +
   labs(y = "proportion of times the null was rejected",
        title = "The power of the test vs the effect size.")
 
@@ -112,16 +110,9 @@ average_reject_null =
 
 ggplot() +
   geom_point(average_estimate, mapping = aes(x = beta1, y = avg))+
-  geom_line(average_estimate, mapping = aes(x = beta1, y = avg, color = "sample average")) +
+  geom_smooth(average_estimate, mapping = aes(x = beta1, y = avg, color = "sample average"), se = FALSE) +
   geom_point(average_reject_null, mapping = aes(x = beta1, y = avg)) +
-  geom_line(average_reject_null, mapping = aes(x = beta1, y = avg, color = "samples for which the null was rejected")) +
+  geom_smooth(average_reject_null, mapping = aes(x = beta1, y = avg, color = "samples for which the null was rejected"), se = FALSE) +
   labs(y = "average estimate of beta1_hat",
        title = "The average estimate of beta1_hat vs the true value of beta1.")
-
-
-  
-  
-
-  
-```
 
